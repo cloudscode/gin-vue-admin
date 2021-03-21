@@ -29,7 +29,7 @@ local:
 mysql:
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: gva
-  log-mode: false
+  log-mode: true
   log-zap: ""
   max-idle-conns: 10
   max-open-conns: 100

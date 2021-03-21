@@ -1,41 +1,48 @@
 <template>
   <div>
-    <div class="button-box clearflex">
-      <el-button @click="addUser" type="primary">新增用户</el-button>
+    <div class="search-term">
+      <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
+        <el-form-item label="路径">
+          <el-input placeholder="路径" v-model="searchInfo.path"></el-input>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input placeholder="描述" v-model="searchInfo.description"></el-input>
+        </el-form-item>
+        <el-form-item label="api组">
+          <el-input placeholder="api组" v-model="searchInfo.apiGroup"></el-input>
+        </el-form-item>
+        <el-form-item label="请求">
+          <el-select clearable placeholder="请选择" v-model="searchInfo.method">
+            <el-option
+              :key="item.value"
+              :label="`${item.label}(${item.value})`"
+              :value="item.value"
+              v-for="item in methodOptions"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="onSubmit" type="primary">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="openDialog('addApi')" type="primary">新增api</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <el-table :data="tableData" border stripe>
-      <el-table-column label="头像" min-width="50">
+    <el-table :data="tableData" @sort-change="sortChange" border stripe>
+      <el-table-column label="id" min-width="60" prop="ID" sortable="custom"></el-table-column>
+      <el-table-column label="论文名称" min-width="150" prop="title" sortable="custom"></el-table-column>
+       
+
+      <el-table-column fixed="right" label="操作" width="200">
         <template slot-scope="scope">
-          <div :style="{'textAlign':'center'}">
-            <CustomPic :picSrc="scope.row.headerImg" />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="uuid" min-width="250" prop="uuid"></el-table-column>
-      <el-table-column label="用户名" min-width="150" prop="userName"></el-table-column>
-      <el-table-column label="昵称" min-width="150" prop="nickName"></el-table-column>
-      <el-table-column label="用户角色" min-width="150">
-        <template slot-scope="scope">
-          <el-cascader
-            @change="changeAuthority(scope.row)"
-            v-model="scope.row.authority.authorityId"
-            :options="authOptions"
-            :show-all-levels="false"
-            :props="{ checkStrictly: true,label:'authorityName',value:'authorityId',disabled:'disabled',emitPath:false}"
-            filterable
-          ></el-cascader>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" min-width="150">
-        <template slot-scope="scope">
-          <el-popover placement="top" width="160" v-model="scope.row.visible">
-            <p>确定要删除此用户吗</p>
-            <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
-              <el-button type="primary" size="mini" @click="deleteUser(scope.row)">确定</el-button>
-            </div>
-            <el-button type="danger" icon="el-icon-delete" size="small" slot="reference">删除</el-button>
-          </el-popover>
+          <el-button @click="editApi(scope.row)" size="small" type="primary" icon="el-icon-edit">编辑</el-button>
+          <el-button
+            @click="deleteApi(scope.row)"
+            size="small"
+            type="danger"
+            icon="el-icon-delete"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,203 +57,224 @@
       layout="total, sizes, prev, pager, next, jumper"
     ></el-pagination>
 
-    <el-dialog :visible.sync="addUserDialog" custom-class="user-dialog" title="新增用户">
-      <el-form :rules="rules" ref="userForm" :model="userInfo">
-        <el-form-item label="用户名" label-width="80px" prop="username">
-          <el-input v-model="userInfo.username"></el-input>
+    <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
+      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="apiForm">
+        <el-form-item label="论文名称" prop="path">
+          <el-input autocomplete="off" v-model="form.title"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="80px" prop="password">
-          <el-input v-model="userInfo.password"></el-input>
-        </el-form-item>
-        <el-form-item label="别名" label-width="80px" prop="nickName">
-          <el-input v-model="userInfo.nickName"></el-input>
-        </el-form-item>
-        <el-form-item label="头像" label-width="80px">
-          <div style="display:inline-block" @click="openHeaderChange">
-            <img class="header-img-box" v-if="userInfo.headerImg" :src="userInfo.headerImg" />
-            <div v-else class="header-img-box">从媒体库选择</div>
-          </div>
-        </el-form-item>
-        <el-form-item label="用户角色" label-width="80px" prop="authorityId">
-          <el-cascader
-            v-model="userInfo.authorityId"
-            :options="authOptions"
-            :show-all-levels="false"
-            :props="{ checkStrictly: true,label:'authorityName',value:'authorityId',disabled:'disabled',emitPath:false}"
-            filterable
-          ></el-cascader>
-        </el-form-item>
+         
       </el-form>
+      <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
       <div class="dialog-footer" slot="footer">
-        <el-button @click="closeAddUserDialog">取 消</el-button>
-        <el-button @click="enterAddUserDialog" type="primary">确 定</el-button>
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
-    <ChooseImg ref="chooseImg" :target="userInfo" :targetKey="`headerImg`"/>
   </div>
 </template>
 
 
 <script>
-// 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成
-const path = process.env.VUE_APP_BASE_API;
+// 获取列表内容封装在mixins内部  getTableData方法 初始化已封装完成 条件搜索时候 请把条件安好后台定制的结构体字段 放到 this.searchInfo 中即可实现条件搜索
+
 import {
-  getPaperList  
+  getPaperList,
+  create,
+  update,
+  deleteItem,
+  getInfo
 } from "@/api/modules/research/paper";
-import { getAuthorityList } from "@/api/authority";
 import infoList from "@/mixins/infoList";
-import { mapGetters } from "vuex";
-import CustomPic from "@/components/customPic";
-import ChooseImg from "@/components/chooseImg";
+import { toSQLLine } from "@/utils/stringFun";
+const methodOptions = [
+  {
+    value: "POST",
+    label: "创建",
+    type: "success"
+  },
+  {
+    value: "GET",
+    label: "查看",
+    type: ""
+  },
+  {
+    value: "PUT",
+    label: "更新",
+    type: "warning"
+  },
+  {
+    value: "DELETE",
+    label: "删除",
+    type: "danger"
+  }
+];
+
 export default {
   name: "Api",
   mixins: [infoList],
-  components: { CustomPic,ChooseImg },
   data() {
-    debugger
     return {
       listApi: getPaperList,
-      path: path,
-      authOptions: [],
-      addUserDialog: false,
-      userInfo: {
-        username: "",
-        password: "",
-        nickName: "",
-        headerImg: "",
-        authorityId: ""
+      dialogFormVisible: false,
+      dialogTitle: "新增Api",
+      form: {
+        title: "",
       },
+      methodOptions: methodOptions,
+      type: "",
       rules: {
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" },
-          { min: 6, message: "最低6位字符", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "请输入用户密码", trigger: "blur" },
-          { min: 6, message: "最低6位字符", trigger: "blur" }
-        ],
-        nickName: [
-          { required: true, message: "请输入用户昵称", trigger: "blur" }
-        ],
-        authorityId: [
-          { required: true, message: "请选择用户角色", trigger: "blur" }
-        ]
+        title: [{ required: true, message: "请输入论文名称", trigger: "blur" }],
+     
       }
     };
   },
-  computed: {
-    ...mapGetters("user", ["token"])
-  },
   methods: {
-    openHeaderChange(){
-      this.$refs.chooseImg.open()
+    // 排序
+    sortChange({ prop, order }) {
+      if (prop) {
+        this.searchInfo.orderKey = toSQLLine(prop);
+        this.searchInfo.desc = order == "descending";
+      }
+      this.getTableData();
     },
-    setOptions(authData) {
-      this.authOptions = [];
-      this.setAuthorityOptions(authData, this.authOptions);
+    //条件搜索前端看此方法
+    onSubmit() {
+      this.page = 1;
+      this.pageSize = 10;
+      this.getTableData();
     },
-    setAuthorityOptions(AuthorityData, optionsData) {
-      AuthorityData &&
-        AuthorityData.map(item => {
-          if (item.children && item.children.length) {
-            const option = {
-              authorityId: item.authorityId,
-              authorityName: item.authorityName,
-              children: []
-            };
-            this.setAuthorityOptions(item.children, option.children);
-            optionsData.push(option);
-          } else {
-            const option = {
-              authorityId: item.authorityId,
-              authorityName: item.authorityName
-            };
-            optionsData.push(option);
+    initForm() {
+      this.$refs.apiForm.resetFields();
+      this.form = {
+        path: "",
+        apiGroup: "",
+        method: "",
+        description: ""
+      };
+    },
+    closeDialog() {
+      this.initForm();
+      this.dialogFormVisible = false;
+    },
+    openDialog(type) {
+      switch (type) {
+        case "addApi":
+          this.dialogTitlethis = "新增";
+          break;
+        case "edit":
+          this.dialogTitlethis = "编辑";
+          break;
+        default:
+          break;
+      }
+      this.type = type;
+      this.dialogFormVisible = true;
+    },
+    async editApi(row) {
+      const res = await getInfo({ id: row.ID });
+      this.form = res.data.api;
+      this.openDialog("edit");
+    },
+    async deleteApi(row) {
+      this.$confirm("此操作将永久删除所有角色下该api, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const res = await deleteInfo(row);
+          if (res.code == 0) {
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+            if (this.tableData.length == 1) {
+              this.page--;
+            }
+            this.getTableData();
           }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
         });
     },
-    async deleteUser(row) {
-      const res = await deleteUser({ id: row.ID });
-      if (res.code == 0) {
-        this.getTableData();
-        row.visible = false;
-      }
-    },
-    async enterAddUserDialog() {
-      this.$refs.userForm.validate(async valid => {
+    async enterDialog() {
+      this.$refs.apiForm.validate(async valid => {
         if (valid) {
-          const res = await register(this.userInfo);
-          if (res.code == 0) {
-            this.$message({ type: "success", message: "创建成功" });
+          switch (this.type) {
+            case "addApi":
+              {
+                const res = await create(this.form);
+                if (res.code == 0) {
+                  this.$message({
+                    type: "success",
+                    message: "添加成功",
+                    showClose: true
+                  });
+                }
+                this.getTableData();
+                this.closeDialog();
+              }
+
+              break;
+            case "edit":
+              {
+                const res = await update(this.form);
+                if (res.code == 0) {
+                  this.$message({
+                    type: "success",
+                    message: "编辑成功",
+                    showClose: true
+                  });
+                }
+                this.getTableData();
+                this.closeDialog();
+              }
+              break;
+            default:
+              {
+                this.$message({
+                  type: "error",
+                  message: "未知操作",
+                  showClose: true
+                });
+              }
+              break;
           }
-          await this.getTableData();
-          this.closeAddUserDialog();
         }
       });
-    },
-    closeAddUserDialog() {
-      this.$refs.userForm.resetFields();
-      this.addUserDialog = false;
-    },
-    handleAvatarSuccess(res) {
-      this.userInfo.headerImg = res.data.file.url;
-    },
-    addUser() {
-      this.addUserDialog = true;
-    },
-    async changeAuthority(row) {
-      const res = await setUserAuthority({
-        uuid: row.uuid,
-        authorityId: row.authority.authorityId
-      });
-      if (res.code == 0) {
-        this.$message({ type: "success", message: "角色设置成功" });
-      }
     }
   },
-  async created() {
+  filters: {
+    methodFiletr(value) {
+      const target = methodOptions.filter(item => item.value === value)[0];
+      // return target && `${target.label}(${target.value})`
+      return target && `${target.label}`;
+    },
+    tagTypeFiletr(value) {
+      const target = methodOptions.filter(item => item.value === value)[0];
+      return target && `${target.type}`;
+    }
+  },
+  created() {
     this.getTableData();
-    const res = await getAuthorityList({ page: 1, pageSize: 999 });
-    this.setOptions(res.data.list);
   }
 };
 </script>
-<style lang="scss">
-
+<style scoped lang="scss">
 .button-box {
   padding: 10px 20px;
   .el-button {
     float: right;
   }
 }
-
-.user-dialog {
-  .header-img-box {
-  width: 200px;
-  height: 200px;
-  border: 1px dashed #ccc;
-  border-radius: 20px;
-  text-align: center;
-  line-height: 200px;
-  cursor: pointer;
+.el-tag--mini {
+  margin-left: 5px;
 }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409eff;
-  }
-  .avatar-uploader-icon {
-    border: 1px dashed #d9d9d9 !important;
-    border-radius: 6px;
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
+.warning {
+  color: #dc143c;
 }
 </style>
