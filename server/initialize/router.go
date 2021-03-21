@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	paperRouter "gin-vue-admin/modules/research/paper/router"
 )
 
 // 初始化总路由
@@ -49,6 +50,7 @@ func Routers() *gin.Engine {
 		router.InitSysDictionaryDetailRouter(PrivateGroup)   // 字典详情管理
 		router.InitFileUploadAndDownloadRouter(PrivateGroup) // 文件上传下载功能路由
 		router.InitExcelRouter(PrivateGroup)                 // 表格导入导出
+		paperRouter.InitResearchRouter(PrivateGroup)                 // 表格导入导出
 	}
 	global.GVA_LOG.Info("router register success")
 	return Router
