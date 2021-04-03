@@ -58,11 +58,30 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules" label-width="80px" ref="apiForm">
+      <el-form :inline="true" :model="form" :rules="rules"  size="medium" label-width="80px" ref="apiForm">
         <el-form-item label="论文名称" prop="path">
           <el-input autocomplete="off" v-model="form.title"></el-input>
         </el-form-item>
-         
+         <el-row  >
+          <el-col :span="12">
+            <el-row  >
+              <el-form-item label="单选框组" prop="path">
+                <el-radio-group v-model="form.field109" size="medium">
+                  <el-radio v-for="(item, index) in typeOptions" :key="index" :label="item.value"
+                    :disabled="item.disabled">{{item.label}}</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-row>
+          </el-col>
+          <el-col :span="12">
+            <el-row >
+              <el-form-item label="刊物种类" prop="title">
+                <el-input v-model="form.title" placeholder="请输入刊物种类" clearable
+                  :style="{width: '100%'}"></el-input>
+              </el-form-item>
+            </el-row>
+          </el-col>
+        </el-row>
       </el-form>
       <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
       <div class="dialog-footer" slot="footer">
@@ -119,13 +138,43 @@ export default {
       dialogTitle: "新增Api",
       form: {
         title: "",
+        field109: 1,
       },
       methodOptions: methodOptions,
       type: "",
       rules: {
         title: [{ required: true, message: "请输入论文名称", trigger: "blur" }],
      
-      }
+      },
+      typeOptions: [{
+        "label": "A类",
+        "value": 1
+      }, {
+        "label": "B类",
+        "value": 2
+      }, {
+        "label": "C类",
+        "value": 3
+      }, {
+        "label": "D类",
+        "value": 4
+      }, {
+        "label": "E类",
+        "value": 5
+      }, {
+        "label": "F类·",
+        "value": 6
+      }],
+      field104Options: [{
+        "label": "期刊论文",
+        "value": 1
+      }, {
+        "label": "论文集",
+        "value": 2
+      }, {
+        "label": "文章",
+        "value": 3
+      }],
     };
   },
   methods: {
@@ -171,8 +220,8 @@ export default {
       this.dialogFormVisible = true;
     },
     async editApi(row) {
-      const res = await getInfo({ id: row.ID });
-      this.form = res.data.api;
+      const res = await getInfo({ ID: row.ID });
+      this.form = res.data.detail;
       this.openDialog("edit");
     },
     async deleteApi(row) {

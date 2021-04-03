@@ -52,7 +52,9 @@ import {
     Steps,
     Upload,
     Progress,
-    MessageBox
+    MessageBox,
+    Radio,
+    RadioGroup
 } from 'element-ui';
 
 Vue.use(Button);
@@ -103,7 +105,8 @@ Vue.use(Upload);
 Vue.use(Progress);
 Vue.use(Scrollbar);
 Vue.use(Loading.directive);
-
+Vue.use(Radio);
+Vue.use(RadioGroup);
 Vue.prototype.$loading = Loading.service;
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;

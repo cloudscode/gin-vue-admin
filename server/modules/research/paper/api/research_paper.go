@@ -10,6 +10,7 @@ import (
 	"gin-vue-admin/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	userUtils "gin-vue-admin/api/v1"
 )
 
 func Create(c *gin.Context) {
@@ -72,6 +73,8 @@ func Delete(c *gin.Context) {
 }
 
 func GetUserList(c *gin.Context) {
+	var id = userUtils.GetUserUuid(c)
+	println("***********************"+id)
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
 	if err := utils.Verify(pageInfo, utils.PageInfoVerify); err != nil {

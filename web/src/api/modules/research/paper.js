@@ -20,12 +20,12 @@ export const create = (data) => {
 export const update = (data) => {
     return service({
         url: "/paper/updateInfo",
-        method: 'post',
+        method: 'put',
         data: data
     })
 }
 
-export const getInfo = (params) => {debugger
+export const getInfo = (params) => {
     return service({
         url: "/paper/getInfo",
         method: 'get',
