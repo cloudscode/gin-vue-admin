@@ -2,11 +2,26 @@ package model
 
 import (
 	"gin-vue-admin/global"
+	"time"
 )
+
 
 type ResearchPaper struct {
 	global.GVA_MODEL
-	Title       string `json:"title" gorm:"comment:论文名称"`
+	Title      string `json:"title" gorm:"comment:论文名称"`
+	Kind       int `json:"kind" gorm:"comment:论文类型"`
+	PublicationType int `json:"publicationType" gorm:"comment:刊物类别"`
+	PublicationName string `json:"publicationName" gorm:"comment:刊物名称"`
+	Period string `json:"period" gorm:"comment:期号"`
+	VolumeNo string `json:"volumeNo" gorm:"comment:卷号"`
+	PublishingDate time.Time `json:"publishingDate" gorm:"comment:发表/出版时间"`
+	WordLength       int `json:"wordLength" gorm:"comment:字数"`
+	KnowledgeClass string `json:"knowledgeClass" gorm:"comment:学科门类"`
+	FirstKnowledge string `json:"firstKnowledge" gorm:"comment:一级学科"`
+	Source string `json:"source" gorm:"comment:成果来源"`
+	PublishingRange string `json:"publishingRange" gorm:"comment:发表范围"`
+	Issn string `json:"issn" gorm:"comment:issn号"`
+	Cn string `json:"cn" gorm:"comment:cn号"`
 }
 
 // type Meta struct {

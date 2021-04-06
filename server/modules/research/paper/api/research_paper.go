@@ -10,7 +10,6 @@ import (
 	"gin-vue-admin/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	userUtils "gin-vue-admin/api/v1"
 )
 
 func Create(c *gin.Context) {
@@ -20,8 +19,9 @@ func Create(c *gin.Context) {
 	//	response.FailWithMessage(err.Error(), c)
 	//	return
 	//}
-	user := &model.ResearchPaper{Title: R.Title}
-	err, userReturn := service.Create(*user)
+	var user = model.ResearchPaper{}
+	 utils.CopyProperties(&user,&R)
+	err, userReturn := service.Create(user)
 	if err != nil {
 		global.GVA_LOG.Error("注册失败", zap.Any("err", err))
 		response.FailWithDetailed(dto.ResearchPaperResponse{ResearchPaper: userReturn}, "保存失败", c)
@@ -73,7 +73,7 @@ func Delete(c *gin.Context) {
 }
 
 func GetUserList(c *gin.Context) {
-	var id = userUtils.GetUserUuid(c)
+	var id = utils.GetUserUuid(c)
 	println("***********************"+id)
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)

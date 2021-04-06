@@ -58,32 +58,117 @@
     ></el-pagination>
 
     <el-dialog :before-close="closeDialog" :title="dialogTitle" :visible.sync="dialogFormVisible">
-      <el-form :inline="true" :model="form" :rules="rules"  size="medium" label-width="80px" ref="apiForm">
-        <el-form-item label="论文名称" prop="path">
-          <el-input autocomplete="off" v-model="form.title"></el-input>
+      <el-form :inline="true" :model="formData" :rules="rules"  size="medium" label-width="110px" ref="formData">
+         <el-row >
+            <el-form-item label="论文名称" prop="path">
+          <el-input autocomplete="off" v-model="formData.title"></el-input>
         </el-form-item>
-         <el-row  >
-          <el-col :span="12">
-            <el-row  >
-              <el-form-item label="单选框组" prop="path">
-                <el-radio-group v-model="form.field109" size="medium">
-                  <el-radio v-for="(item, index) in typeOptions" :key="index" :label="item.value"
-                    :disabled="item.disabled">{{item.label}}</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-row>
-          </el-col>
-          <el-col :span="12">
-            <el-row >
-              <el-form-item label="刊物种类" prop="title">
-                <el-input v-model="form.title" placeholder="请输入刊物种类" clearable
+         
+         
+        </el-row>      
+  <el-row>
+             <el-form-item label="刊物类别" prop="path">
+            <el-radio-group v-model="formData.publicationType" size="medium">
+              <el-radio v-for="(item, index) in publicationType" :key="index" :label="item.value"
+                :disabled="item.disabled">{{item.label}}</el-radio>
+            </el-radio-group>
+          </el-form-item>          
+
+  </el-row>
+             <el-row>
+                <el-col >
+                     <el-form-item label="论文类型" prop="kind">
+            <el-radio-group v-model="formData.kind" size="medium">
+              <el-radio v-for="(item, index) in kind" :key="index" :label="item.value"
+                :disabled="item.disabled">{{item.label}}</el-radio>
+            </el-radio-group>
+          </el-form-item>      
+                </el-col>
+                <el-col >
+                       <el-form-item label="刊物名称" prop="publicationName">
+                <el-input v-model="formData.publicationName" placeholder="请输入刊物名称" clearable
                   :style="{width: '100%'}"></el-input>
               </el-form-item>
-            </el-row>
-          </el-col>
-        </el-row>
+                </el-col>
+                 
+            </el-row> 
+       <el-row>
+                <el-col >
+                       <el-form-item label="期号" prop="period">
+                <el-input v-model="formData.period" placeholder="期号" clearable
+                 ></el-input>
+              </el-form-item>
+                </el-col>
+                <el-col >
+                      <el-form-item label="卷号" prop="volumeNo">
+                <el-input v-model="formData.volumeNo" placeholder="卷号" clearable
+                 ></el-input>
+              </el-form-item>
+                </el-col>
+                 
+            </el-row> 
+            <el-row>
+                <el-col >
+                  <el-form-item label="学科门类" prop="knowledgeClass">
+                    <el-select v-model="formData.knowledgeClass" placeholder="请输入学科门类" clearable
+                      :style="{width: '100%'}">
+                      <el-option v-for="(item, index) in knowledgeClass" :key="index" :label="item.label"
+                        :value="item.value" :disabled="item.disabled"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col >                     
+             <el-form-item label="一级学科:">
+                <el-input v-model="formData.firstKnowledge" clearable placeholder="请输入一级学科" ></el-input>
+          </el-form-item>
+                </el-col>
+                 
+            </el-row> 
+           
+          <el-row>
+                <el-col >
+                          <el-form-item label="成果来源:">
+                <el-input v-model="formData.source" clearable placeholder="请输入成果来源" ></el-input>
+          </el-form-item>
+                </el-col>
+                <el-col >
+                    
+                </el-col>
+                     <el-form-item label="发表范围:">
+                <el-input v-model="formData.publishingRange" clearable placeholder="请输入发表范围" ></el-input>
+          </el-form-item>
+            </el-row> 
+            <el-row>
+                <el-col >
+                       <el-form-item label="ISSN号:">
+                <el-input v-model="formData.issn" clearable placeholder="请输入ISSN号" ></el-input>
+          </el-form-item>
+                </el-col>
+                <el-col >
+                       <el-form-item label="ＣＮ号:">
+                <el-input v-model="formData.cn" clearable placeholder="请输入ＣＮ号" ></el-input>
+          </el-form-item>
+                </el-col>
+                 
+            </el-row> 
+
+              <el-row>
+                <el-col >
+                  <el-form-item label="发表/出版时间" prop="publishingDate">
+                <el-date-picker v-model="formData.publishingDate" format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+                 placeholder="请选择发表/出版时间" clearable   :style="{width: '95%'}"></el-date-picker>
+              </el-form-item>       
+                </el-col>
+                <el-col >
+                       <el-form-item label="字数" prop="wordLength">
+                  <el-input-number v-model="formData.wordLength" placeholder="字数" :precision="2" ></el-input-number>
+           </el-form-item>
+                </el-col>
+                 
+            </el-row> 
       </el-form>
-      <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
+       
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
@@ -135,10 +220,22 @@ export default {
     return {
       listApi: getPaperList,
       dialogFormVisible: false,
-      dialogTitle: "新增Api",
-      form: {
+      dialogTitle: "新增",
+      formData: {
         title: "",
-        field109: 1,
+        publicationType: 1,
+        kind:1,
+        publicationName:"",
+        period:"",
+        volumeNo:"",
+        publishingDate: new Date(),
+        wordLength:0,
+        knowledgeClass:"",
+        firstKnowledge:"",
+        source:"",
+        publishingRange:"",
+        issn:"",
+        cn:"",
       },
       methodOptions: methodOptions,
       type: "",
@@ -146,7 +243,7 @@ export default {
         title: [{ required: true, message: "请输入论文名称", trigger: "blur" }],
      
       },
-      typeOptions: [{
+      publicationType: [{
         "label": "A类",
         "value": 1
       }, {
@@ -165,7 +262,7 @@ export default {
         "label": "F类·",
         "value": 6
       }],
-      field104Options: [{
+      kind: [{
         "label": "期刊论文",
         "value": 1
       }, {
@@ -174,6 +271,13 @@ export default {
       }, {
         "label": "文章",
         "value": 3
+      }],
+      knowledgeClass: [{
+        "label": "科技类",
+        "value": '1'
+      }, {
+        "label": "社科类",
+        "value": '2'
       }],
     };
   },
@@ -193,12 +297,21 @@ export default {
       this.getTableData();
     },
     initForm() {
-      this.$refs.apiForm.resetFields();
-      this.form = {
-        path: "",
-        apiGroup: "",
-        method: "",
-        description: ""
+      //this.$refs.form.resetFields();
+      this.formData = {
+        title: "",
+        kind: 1,
+        publicationType: 1,
+        publicationName:"",
+        period:"",
+        publishingDate: new Date(),
+        wordLength:0,
+        knowledgeClass:"",
+        firstKnowledge:"",
+        source:"",
+        publishingRange:"",
+        issn:"",
+        cn:"",
       };
     },
     closeDialog() {
@@ -207,7 +320,7 @@ export default {
     },
     openDialog(type) {
       switch (type) {
-        case "addApi":
+        case "addApi":this.initForm();
           this.dialogTitlethis = "新增";
           break;
         case "edit":
@@ -221,7 +334,7 @@ export default {
     },
     async editApi(row) {
       const res = await getInfo({ ID: row.ID });
-      this.form = res.data.detail;
+      this.formData = res.data.detail;
       this.openDialog("edit");
     },
     async deleteApi(row) {
@@ -251,12 +364,14 @@ export default {
         });
     },
     async enterDialog() {
-      this.$refs.apiForm.validate(async valid => {
-        if (valid) {
+      // console.log('****' + JSON.stringify(this.formData) + '***')
+      this.formData.publishingDate = new Date(this.formData.publishingDate).toISOString()
+      this.$refs.formData.validate(async valid => {
+        if (valid) {         
           switch (this.type) {
             case "addApi":
-              {
-                const res = await create(this.form);
+              {               
+                const res = await create(this.formData);
                 if (res.code == 0) {
                   this.$message({
                     type: "success",
@@ -270,8 +385,8 @@ export default {
 
               break;
             case "edit":
-              {
-                const res = await update(this.form);
+              {                
+                const res = await update(this.formData);              
                 if (res.code == 0) {
                   this.$message({
                     type: "success",
@@ -313,17 +428,3 @@ export default {
   }
 };
 </script>
-<style scoped lang="scss">
-.button-box {
-  padding: 10px 20px;
-  .el-button {
-    float: right;
-  }
-}
-.el-tag--mini {
-  margin-left: 5px;
-}
-.warning {
-  color: #dc143c;
-}
-</style>
