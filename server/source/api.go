@@ -86,6 +86,12 @@ var apis = []model.SysApi{
 	{global.GVA_MODEL{ID: 83, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/exportExcel", "导出excel", "excel", "POST"},
 	{global.GVA_MODEL{ID: 84, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/excel/downloadTemplate", "下载excel模板", "excel", "GET"},
 	{global.GVA_MODEL{ID: 85, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/api/deleteApisByIds", "批量删除api", "api", "DELETE"},
+	{global.GVA_MODEL{ID: 134, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/paper/createInfo", "创建", "paper", "POST"},
+	{global.GVA_MODEL{ID: 135, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/paper/updateInfo", "更新", "paper", "PUT"},
+	{global.GVA_MODEL{ID: 136, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/paper/deleteInfo", "删除", "paper", "DELETE"},
+	{global.GVA_MODEL{ID: 137, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/paper/getInfo", "获取一条", "paper", "GET"},
+	{global.GVA_MODEL{ID: 138, CreatedAt: time.Now(), UpdatedAt: time.Now()}, "/paper/getUserList", "获取列表", "paper", "POST"},
+
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
