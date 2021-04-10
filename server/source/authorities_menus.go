@@ -58,6 +58,8 @@ var authorityMenus = []AuthorityMenus{
 	{"9528", 15},
 	{"9528", 16},
 	{"9528", 17},
+	{"888", 33},
+	{"888", 34},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)

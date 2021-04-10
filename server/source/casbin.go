@@ -161,11 +161,11 @@ var carbines = []gormadapter.CasbinRule{
 	{Ptype: "p", V0: "9528", V1: "/customer/customer", V2: "GET"},
 	{Ptype: "p", V0: "9528", V1: "/customer/customerList", V2: "GET"},
 	{Ptype: "p", V0: "9528", V1: "/autoCode/createTemp", V2: "POST"},
-	//{Ptype: "p", V0: "888", V1: "/paper/createInfo", V2: "POST"},
-	//{Ptype: "p", V0: "888", V1: "/paper/updateInfo", V2: "PUT"},
-	//{Ptype: "p", V0: "888", V1: "/paper/deleteInfo", V2: "DELETE"},
-	//{Ptype: "p", V0: "888", V1: "/paper/getInfo", V2: "GET"},
-	//{Ptype: "p", V0: "888", V1: "/paper/getUserList", V2: "POST"},
+	{Ptype: "p", V0: "888", V1: "/paper/createInfo", V2: "POST"},
+	{Ptype: "p", V0: "888", V1: "/paper/updateInfo", V2: "PUT"},
+	{Ptype: "p", V0: "888", V1: "/paper/deleteInfo", V2: "DELETE"},
+	{Ptype: "p", V0: "888", V1: "/paper/getInfo", V2: "GET"},
+	{Ptype: "p", V0: "888", V1: "/paper/getUserList", V2: "POST"},
 }
 
 //@author: [SliverHorn](https://github.com/SliverHorn)
